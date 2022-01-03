@@ -1,17 +1,5 @@
-# Player class stores info about each player
-class Player
-  attr_reader :curr_life
-
-  def initialize(name, max_life)
-    @name = name
-    @max_life = max_life
-    @curr_life = max_life
-  end
-
-  def set_num_of_life
-    @curr_life -= 1
-  end
-end
+require './player'
+require './question'
 
 # Game class manages the current state of game
 class Game
@@ -21,21 +9,55 @@ class Game
   end
 
   def start_game
-    while new_game? do
-      puts 'hi'
-      @player1.set_num_of_life
+    # p1 - 0, p2 - 1
+    turn = 0
+    player = @player1
+    while true do
+      # get next player
+      if turn === 0
+        player = @player1
+        turn = 1
+      else
+        player = @player2
+        turn = 0
+      end
+      # create the question
+      question = Question.new()
+      puts question.generate_question
+      # get user input
+      ans = gets.chomp.to_i
+      # update lives accordingly
+      if ans === question.correct_ans
+        puts "#{player.name}: YES! You are correct."
+      else
+        puts "#{player.name}: Seriously? No!"
+        player.set_num_of_life
+      end
+
+      # end game if any players have 0 lives left
+      if new_game?(player) === false
+        if @player1.curr_life === 0
+          player = @player2
+        else
+          player = @player1
+        end
+        puts "#{player.name} wins with a score of #{player.curr_life}/3"
+        puts "----- GAME OVER -----"
+        puts "Good bye!"
+        return
+      end
+
+
+      # scoreboard
+      puts "P1: #{@player1.curr_life}/3 vs P2 #{@player2.curr_life}/3"
+      puts "----- NEW TURN -----"
     end
   end
 
-  def new_game?
-    if @player1.curr_life === 0 || @player2.curr_life == 0
+  def new_game?(player)
+    if player.curr_life === 0
       return false
     end
     return true
   end
 end
-
-p1 = Player.new('Player 1', 3)
-p2 = Player.new('Player 2', 3)
-game = Game.new(p1, p2)
-game.start_game

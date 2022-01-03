@@ -1,5 +1,7 @@
 # Player class stores info about each player
 class Player
+  attr_reader :curr_life, :name
+
   def initialize(name, max_life)
     @name = name
     @max_life = max_life
@@ -7,6 +9,6 @@ class Player
   end
 
   def set_num_of_life
-    curr_life -= 1
+    @curr_life -= 1
   end
 end
